@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Calendar, MapPin, ChevronLeft, ChevronRight, ExternalLink, History, Briefcase, Award } from 'lucide-react';
+import { Calendar, MapPin, ChevronLeft, ChevronRight, ExternalLink, History, Briefcase, Award, Users } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface MilestoneItem {
   id: string;
-  type: 'work' | 'venture' | 'certification' | 'extracurricular';
+  type: 'work' | 'venture' | 'extracurricular';
   title: string;
   organization: string;
   organizationUrl?: string;
@@ -16,7 +16,7 @@ interface MilestoneItem {
 }
 
 export const ExperienceSection: React.FC = () => {
-  const [filter, setFilter] = useState<'all' | 'experience' | 'certifications'>('all');
+  const [filter, setFilter] = useState<'all' | 'work' | 'affiliations'>('all');
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const activeCardIdsRef = useRef<Set<string>>(new Set());
   const [renderCounter, setRenderCounter] = useState(0);
@@ -24,7 +24,7 @@ export const ExperienceSection: React.FC = () => {
   const { lang, t } = useLanguage();
   const { data } = usePortfolio();
 
-  const handleFilterClick = (f: 'all' | 'experience' | 'certifications') => {
+  const handleFilterClick = (f: 'all' | 'work' | 'affiliations') => {
     setFilter(prev => (prev === f ? 'all' : f));
   };
 
@@ -71,16 +71,6 @@ export const ExperienceSection: React.FC = () => {
       location: item.location,
       points: item.points || [],
     })),
-    // Dynamic Certifications & Courses
-    ...data.certifications.map((item, idx) => ({
-      id: `cert-${idx}`,
-      type: 'certification' as const,
-      title: item.title,
-      organization: item.issuer,
-      organizationUrl: item.organizationUrl || `https://www.google.com/search?q=${encodeURIComponent(item.issuer)}`,
-      period: item.year,
-      points: item.points && item.points.length > 0 ? item.points : [item.title],
-    })),
     // Dynamic Extracurricular & Voluntary
     ...(data.extraCurricular || []).map((item, idx) => ({
       id: `extra-${idx}`,
@@ -94,8 +84,8 @@ export const ExperienceSection: React.FC = () => {
   ];
 
   const filteredMilestones = milestones.filter((m) => {
-    if (filter === 'experience') return m.type === 'work' || m.type === 'venture';
-    if (filter === 'certifications') return m.type === 'certification' || m.type === 'extracurricular';
+    if (filter === 'work') return m.type === 'work' || m.type === 'venture';
+    if (filter === 'affiliations') return m.type === 'extracurricular';
     return true;
   });
 
@@ -105,14 +95,12 @@ export const ExperienceSection: React.FC = () => {
         return { label: 'Work Experience', color: 'text-purple-300 bg-purple-500/15 border-purple-400/30' };
       case 'venture':
         return { label: 'Entrepreneurial Venture', color: 'text-indigo-300 bg-indigo-500/15 border-indigo-400/30' };
-      case 'certification':
-        return { label: 'Training & Certification', color: 'text-pink-300 bg-pink-500/15 border-pink-400/30' };
       case 'extracurricular':
         return { label: 'Affiliations & Voluntary', color: 'text-purple-300 bg-purple-500/15 border-purple-400/30' };
     }
   };
 
-  const handleFilterChange = (newFilter: 'all' | 'experience' | 'certifications') => {
+  const handleFilterChange = (newFilter: 'all' | 'work' | 'affiliations') => {
     setFilter(newFilter);
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
@@ -173,65 +161,68 @@ export const ExperienceSection: React.FC = () => {
       `}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header - Central aligned on mobile, responsive split on desktop */}
+        {/* Section Header - Centrally aligned across all devices */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center text-center md:flex-row md:items-end md:text-left justify-between gap-4 mb-8 sm:mb-10 px-2"
+          className="flex flex-col items-center text-center justify-center gap-4 mb-8 sm:mb-10 px-2"
         >
-          <div className="flex flex-col items-center text-center md:items-start md:text-left">
+          <div className="flex flex-col items-center text-center">
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-400/30 text-purple-300 text-[11px] sm:text-xs font-mono mb-2">
               <History className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-purple-400" />
               <span>{t.timeline.tag}</span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-bold text-white mt-1 tracking-tight text-center md:text-left">
+            <h2 className="text-xl sm:text-3xl font-bold text-white mt-1 tracking-tight text-center">
               {data.sectionTitles?.experience || t.timeline.title}
             </h2>
-            <p className="text-xs sm:text-sm text-purple-200/70 mt-1 max-w-xl text-center md:text-left leading-relaxed">
+            <p className="text-xs sm:text-sm text-purple-200/70 mt-1 max-w-xl text-center leading-relaxed">
               {t.timeline.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Icon-based navigation for mobile (< 768px), full labels on desktop */}
-            <div className="flex flex-row items-center justify-center bg-slate-900/90 border border-purple-500/20 p-1 rounded-xl shrink-0 gap-1">
+          <div className="flex items-center justify-center gap-3 sm:gap-4">
+            {/* Icon-only for mobile & tablet (< 1024px), labels on desktop, centrally aligned */}
+            <div className="flex flex-row items-center justify-center bg-slate-900/90 border border-purple-500/20 p-1 rounded-xl shrink-0 gap-1 shadow-lg">
               <button
                 onClick={() => handleFilterClick('all')}
                 title={t.timeline.all}
-                className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
+                aria-label={t.timeline.all}
+                className={`flex items-center justify-center gap-2 px-3 sm:px-3.5 lg:px-4 py-1.5 sm:py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   filter === 'all'
                     ? 'bg-purple-600 text-white font-semibold shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <History className="w-4 h-4 text-purple-300 shrink-0" />
-                <span className="hidden md:inline">{t.timeline.all}</span>
+                <span className="hidden lg:inline">{t.timeline.all}</span>
               </button>
               <button
-                onClick={() => handleFilterClick('experience')}
+                onClick={() => handleFilterClick('work')}
                 title={t.timeline.work}
-                className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-                  filter === 'experience'
+                aria-label={t.timeline.work}
+                className={`flex items-center justify-center gap-2 px-3 sm:px-3.5 lg:px-4 py-1.5 sm:py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
+                  filter === 'work'
                     ? 'bg-purple-600 text-white font-semibold shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <Briefcase className="w-4 h-4 text-indigo-300 shrink-0" />
-                <span className="hidden md:inline">{t.timeline.work}</span>
+                <span className="hidden lg:inline">{t.timeline.work}</span>
               </button>
               <button
-                onClick={() => handleFilterClick('certifications')}
+                onClick={() => handleFilterClick('affiliations')}
                 title={t.timeline.training}
-                className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-                  filter === 'certifications'
+                aria-label={t.timeline.training}
+                className={`flex items-center justify-center gap-2 px-3 sm:px-3.5 lg:px-4 py-1.5 sm:py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
+                  filter === 'affiliations'
                     ? 'bg-purple-600 text-white font-semibold shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Award className="w-4 h-4 text-pink-300 shrink-0" />
-                <span className="hidden md:inline">{t.timeline.training}</span>
+                <Users className="w-4 h-4 text-purple-300 shrink-0" />
+                <span className="hidden lg:inline">{t.timeline.training}</span>
               </button>
             </div>
 

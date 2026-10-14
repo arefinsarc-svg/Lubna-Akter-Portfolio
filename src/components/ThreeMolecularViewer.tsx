@@ -346,7 +346,7 @@ export const ThreeMolecularViewer: React.FC<ThreeMolecularViewerProps> = ({ clas
             }`}
           >
             <Activity className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">DNA Helix</span>
+            <span className="text-[11px] sm:text-xs">DNA Helix</span>
           </button>
           <button
             onClick={() => setModelType('molecule')}
@@ -360,7 +360,7 @@ export const ThreeMolecularViewer: React.FC<ThreeMolecularViewerProps> = ({ clas
             }`}
           >
             <Atom className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Molecule</span>
+            <span className="text-[11px] sm:text-xs">Molecule</span>
           </button>
           <button
             onClick={() => setModelType('capsule')}
@@ -374,7 +374,7 @@ export const ThreeMolecularViewer: React.FC<ThreeMolecularViewerProps> = ({ clas
             }`}
           >
             <Pill className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Capsule</span>
+            <span className="text-[11px] sm:text-xs">Capsule</span>
           </button>
         </div>
       </div>

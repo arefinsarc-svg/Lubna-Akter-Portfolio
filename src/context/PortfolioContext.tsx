@@ -67,10 +67,11 @@ interface PortfolioContextType {
   updateSectionTitles: (titles: Partial<typeof PORTFOLIO_DATA.sectionTitles>) => void;
   updateMetaData: (meta: Partial<MetaDataConfig>) => void;
   updateSecondaryAccent: (color: string) => void;
+  saveAllData: (allData: Partial<PortfolioData>) => void;
   resetToDefault: () => void;
 }
 
-const STORAGE_KEY = 'lubna_portfolio_data_v6';
+const STORAGE_KEY = 'lubna_portfolio_data_v11';
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
@@ -78,7 +79,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [data, setData] = useState<PortfolioData>(() => {
     try {
       // Clean up legacy cached data keys
-      ['lubna_portfolio_data_v1', 'lubna_portfolio_data_v2', 'lubna_portfolio_data_v3', 'lubna_portfolio_data_v4', 'lubna_portfolio_data_v5'].forEach(k => {
+      [
+        'lubna_portfolio_data_v1',
+        'lubna_portfolio_data_v2',
+        'lubna_portfolio_data_v3',
+        'lubna_portfolio_data_v4',
+        'lubna_portfolio_data_v5',
+        'lubna_portfolio_data_v6',
+        'lubna_portfolio_data_v7',
+        'lubna_portfolio_data_v8',
+        'lubna_portfolio_data_v9',
+        'lubna_portfolio_data_v10',
+      ].forEach(k => {
         try { localStorage.removeItem(k); } catch (_) {}
       });
 
@@ -108,19 +120,33 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           mergedProfile.customSocialLinks = [];
         }
 
-        const mergedSectionTitles = { ...PORTFOLIO_DATA.sectionTitles, ...(parsed.sectionTitles || {}) };
+        const mergedSectionTitles = {
+          ...PORTFOLIO_DATA.sectionTitles,
+          ...(parsed.sectionTitles || {}),
+          skills: 'Pharmaceutical Knowledge & Skills',
+        };
 
         return {
           ...PORTFOLIO_DATA,
           ...parsed,
           profile: mergedProfile,
-          education: PORTFOLIO_DATA.education,
-          workExperience: PORTFOLIO_DATA.workExperience,
-          entrepreneurialExperience: PORTFOLIO_DATA.entrepreneurialExperience,
-          certifications: PORTFOLIO_DATA.certifications,
-          extraCurricular: PORTFOLIO_DATA.extraCurricular,
-          references: PORTFOLIO_DATA.references,
+          coreCompetencies: parsed.coreCompetencies || PORTFOLIO_DATA.coreCompetencies,
+          softSkills: parsed.softSkills || PORTFOLIO_DATA.softSkills,
+          computerLiteracy: parsed.computerLiteracy || PORTFOLIO_DATA.computerLiteracy,
+          education: ((parsed.education || PORTFOLIO_DATA.education) as EducationItem[]).map(e => ({
+            ...e,
+            timeline: (e.timeline || '').replace(/\s*\(In Progress\)/gi, '').trim(),
+          })),
+          workExperience: parsed.workExperience || PORTFOLIO_DATA.workExperience,
+          entrepreneurialExperience: parsed.entrepreneurialExperience || PORTFOLIO_DATA.entrepreneurialExperience,
+          certifications: ((parsed.certifications || PORTFOLIO_DATA.certifications) as CertificationItem[]).map(c => ({
+            ...c,
+            group: (c.group || '').replace(/ProfessionalTraining/gi, 'Professional Training'),
+          })),
+          extraCurricular: parsed.extraCurricular || PORTFOLIO_DATA.extraCurricular,
+          references: parsed.references || PORTFOLIO_DATA.references,
           languages: parsed.languages && parsed.languages.length > 0 ? parsed.languages : PORTFOLIO_DATA.languages,
+          personalInterests: parsed.personalInterests && parsed.personalInterests.length > 0 ? parsed.personalInterests : PORTFOLIO_DATA.personalInterests,
           sectionTitles: mergedSectionTitles,
         };
       }
@@ -281,6 +307,25 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     document.documentElement.style.setProperty('--accent-glow', `${accent}40`);
   }, [data.metaData, data.secondaryAccent]);
 
+  const saveAllData = (updatedData: Partial<PortfolioData>) => {
+    setData(prev => {
+      const next: PortfolioData = {
+        ...prev,
+        ...updatedData,
+        profile: { ...prev.profile, ...(updatedData.profile || {}) },
+        personalDetails: { ...prev.personalDetails, ...(updatedData.personalDetails || {}) },
+        sectionTitles: { ...prev.sectionTitles, ...(updatedData.sectionTitles || {}) },
+        metaData: { ...(prev.metaData || DEFAULT_META_DATA), ...(updatedData.metaData || {}) },
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {
+        console.error('Failed to save to localStorage', e);
+      }
+      return next;
+    });
+  };
+
   const resetToDefault = () => {
     setData(PORTFOLIO_DATA as PortfolioData);
     localStorage.removeItem(STORAGE_KEY);
@@ -309,6 +354,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         updateSectionTitles,
         updateMetaData,
         updateSecondaryAccent,
+        saveAllData,
         resetToDefault,
       }}
     >

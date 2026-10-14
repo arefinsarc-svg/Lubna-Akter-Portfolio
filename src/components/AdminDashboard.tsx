@@ -7,7 +7,7 @@ import {
   Mail, Share2, Type, Settings, Save, RotateCcw, Download, Upload, Plus, 
   Trash2, CheckCircle2, Image as ImageIcon, ChevronLeft, ChevronRight, 
   Building2, Calendar, MapPin, Link as LinkIcon, FileText, Check, ShieldCheck,
-  Globe, Palette, Sparkles
+  Globe, Palette, Sparkles, GraduationCap, School
 } from 'lucide-react';
 import { TrafficChart } from './TrafficChart';
 
@@ -22,6 +22,7 @@ type TabId =
   | 'research' 
   | 'skills' 
   | 'experience' 
+  | 'qualification'
   | 'language' 
   | 'interests' 
   | 'reference' 
@@ -37,13 +38,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
     updateEducation, updateResearchProjects, updateCertifications, updateWorkExperience, 
     updateEntrepreneurial, updateExtraCurricular, updateAffiliations, updatePersonalDetails, 
     updateLanguages, updatePersonalInterests, updateReferences, updateSectionTitles,
-    updateMetaData, updateSecondaryAccent, resetToDefault 
+    updateMetaData, updateSecondaryAccent, saveAllData, resetToDefault 
   } = usePortfolio();
   
   const { isClinical } = useTheme();
   
   // Sorted strictly according to user's specification:
-  // Profile > Header > Research > Skills > Experience > Language > Interests > Reference > Contact > Footer > Sections > Metadata > Settings
+  // Profile > Header > Research > Skills > Experience > Qualification > Language > Interests > Reference > Contact > Footer > Sections > Metadata > Settings
   const [activeTab, setActiveTab] = useState<TabId>('profile');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => 
     typeof window !== 'undefined' ? window.innerWidth < 640 : false
@@ -51,8 +52,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // Experience sub-section tab
-  const [expSubTab, setExpSubTab] = useState<'work' | 'ventures' | 'certs' | 'voluntary' | 'education'>('work');
+  // Experience sub-section tab (Education and Certifications are exclusively in the Qualification tab)
+  const [expSubTab, setExpSubTab] = useState<'work' | 'ventures' | 'voluntary'>('work');
+  // Qualification sub-section tab (Education and Certifications)
+  const [qualSubTab, setQualSubTab] = useState<'education' | 'certs'>('education');
 
   // Local editing states
   const [profile, setProfile] = useState(data.profile);
@@ -76,6 +79,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   // Password change state
   const [newAdminPwd, setNewAdminPwd] = useState('');
 
+  // Synchronize local states whenever dashboard opens or context data updates
+  React.useEffect(() => {
+    if (isOpen) {
+      setProfile(data.profile);
+      setCoreComps([...data.coreCompetencies]);
+      setSoftSkills([...data.softSkills]);
+      setComputerTools([...data.computerLiteracy]);
+      setEducation([...data.education]);
+      setResearchProjects([...data.researchProjects]);
+      setWorkExp([...data.workExperience]);
+      setEntExp([...data.entrepreneurialExperience]);
+      setPersonalDetails({ ...data.personalDetails });
+      setLanguages([...(data.languages || [])]);
+      setInterests([...data.personalInterests]);
+      setReferences([...data.references]);
+      setCerts([...data.certifications]);
+      setAffiliations([...(data.affiliations || [])]);
+      setSectionTitles({ ...data.sectionTitles });
+      setMetaData(data.metaData || DEFAULT_META_DATA);
+      setSecondaryAccent(data.secondaryAccent || '#c084fc');
+    }
+  }, [isOpen, data]);
+
   if (!isOpen) return null;
 
   const showSuccess = (msg: string) => {
@@ -85,6 +111,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
 
   const handleSaveAll = async () => {
     setIsSaving(true);
+    // 1. Atomic save and persistence to localStorage
+    saveAllData({
+      profile,
+      coreCompetencies: coreComps.filter(Boolean),
+      softSkills: softSkills.filter(Boolean),
+      computerLiteracy: computerTools.filter(Boolean),
+      education,
+      researchProjects,
+      workExperience: workExp,
+      entrepreneurialExperience: entExp,
+      personalDetails,
+      languages,
+      personalInterests: interests,
+      references,
+      certifications: certs,
+      affiliations,
+      sectionTitles,
+      metaData,
+      secondaryAccent,
+    });
+    // 2. Individual setters to ensure context reactivity
     updateProfile(profile);
     updateCoreCompetencies(coreComps.filter(Boolean));
     updateSoftSkills(softSkills.filter(Boolean));
@@ -102,9 +149,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
     updateSectionTitles(sectionTitles);
     updateMetaData(metaData);
     updateSecondaryAccent(secondaryAccent);
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await new Promise(resolve => setTimeout(resolve, 400));
     setIsSaving(false);
-    showSuccess('All changes saved successfully!');
+    showSuccess('All changes saved and applied live to website!');
   };
 
   const handleExportJSON = () => {
@@ -172,6 +219,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
     { id: 'research', label: 'Research', icon: BookOpen },
     { id: 'skills', label: 'Skills', icon: Award },
     { id: 'experience', label: 'Experience', icon: Briefcase },
+    { id: 'qualification', label: 'Qualification', icon: GraduationCap },
     { id: 'language', label: 'Language', icon: Languages },
     { id: 'interests', label: 'Interests', icon: Heart },
     { id: 'reference', label: 'Reference', icon: UserCheck },
@@ -736,15 +784,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                 <div className="space-y-6 max-w-4xl mx-auto">
                   <div className="pb-2 border-b border-purple-500/20">
                     <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                      <Award className="w-5 h-5 text-purple-400" /> Technical Skills & Competencies
+                      <Award className="w-5 h-5 text-purple-400" /> Pharmaceutical Knowledge & Skills
                     </h3>
-                    <p className="text-xs text-slate-400">Manage pharmaceutical knowledge, leadership soft skills, and computational research tools.</p>
+                    <p className="text-xs text-slate-400">Manage pharmaceutical knowledge, professional strengths, and tools & research support.</p>
                   </div>
 
                   {/* 1. Core Competencies */}
                   <div className="p-5 rounded-2xl border border-purple-500/30 bg-slate-950/70 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-purple-300">Pharmaceutical Knowledge (Core Competencies)</h4>
+                      <h4 className="text-sm font-semibold text-purple-300">Pharmaceutical Knowledge</h4>
                       <button
                         onClick={() => setCoreComps([...coreComps, 'New Competency'])}
                         className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700"
@@ -779,7 +827,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   {/* 2. Soft Skills */}
                   <div className="p-5 rounded-2xl border border-purple-500/30 bg-slate-950/70 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-indigo-300">Soft Skills & Leadership</h4>
+                      <h4 className="text-sm font-semibold text-indigo-300">Professional Strengths</h4>
                       <button
                         onClick={() => setSoftSkills([...softSkills, 'New Soft Skill'])}
                         className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
@@ -814,7 +862,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   {/* 3. Computer Literacy */}
                   <div className="p-5 rounded-2xl border border-purple-500/30 bg-slate-950/70 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-pink-300">Computer Literacy & Research Tools</h4>
+                      <h4 className="text-sm font-semibold text-pink-300">Tools & Research Support</h4>
                       <button
                         onClick={() => setComputerTools([...computerTools, 'New Tool'])}
                         className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-pink-600 text-white hover:bg-pink-700"
@@ -851,11 +899,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
               {/* 5. EXPERIENCE TAB (Work, Entrepreneurial, Certifications, Voluntary, Education) */}
               {activeTab === 'experience' && (
                 <div className="space-y-6 max-w-4xl mx-auto">
-                  <div className="pb-2 border-b border-purple-500/20">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                      <Briefcase className="w-5 h-5 text-purple-400" /> Professional Experience & Milestones
-                    </h3>
-                    <p className="text-xs text-slate-400">Complete control over Work Experience, Entrepreneurial Ventures, Certifications, and Affiliations with bullet points.</p>
+                  <div className="pb-2 border-b border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Briefcase className="w-5 h-5 text-purple-400" /> Professional Experience & Milestones
+                      </h3>
+                      <p className="text-xs text-slate-400">Complete control over Work Experience, Entrepreneurial Ventures, and Affiliations with bullet points.</p>
+                    </div>
+                    <button
+                      onClick={handleSaveAll}
+                      disabled={isSaving}
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 flex items-center gap-2 shadow-lg shadow-purple-600/30 cursor-pointer shrink-0 self-start sm:self-auto"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+                    </button>
                   </div>
 
                   {/* Sub-tabs for Experience categories */}
@@ -863,9 +921,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     {[
                       { id: 'work', label: `Work Experience (${workExp.length})` },
                       { id: 'ventures', label: `Entrepreneurial (${entExp.length})` },
-                      { id: 'certs', label: `Certifications (${certs.length})` },
                       { id: 'voluntary', label: `Affiliations (${affiliations.length})` },
-                      { id: 'education', label: `Education (${education.length})` },
                     ].map(sub => (
                       <button
                         key={sub.id}
@@ -1055,93 +1111,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     </div>
                   )}
 
-                  {/* Courses & Certifications */}
-                  {expSubTab === 'certs' && (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-pink-300">Courses & Professional Certifications</h4>
-                        <button
-                          onClick={() => setCerts([...certs, { title: 'New Certification', issuer: 'Accrediting Organization', year: '2026', points: ['Course highlights'] }])}
-                          className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700"
-                        >
-                          <Plus className="w-3.5 h-3.5" /> Add Certification
-                        </button>
-                      </div>
 
-                      {certs.map((item, index) => (
-                        <div key={index} className="p-4 rounded-2xl border border-pink-500/25 bg-slate-950/70 space-y-3 relative">
-                          <button
-                            onClick={() => setCerts(certs.filter((_, i) => i !== index))}
-                            className="absolute top-4 right-4 p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-8">
-                            <div>
-                              <label className="block text-xs font-semibold mb-1 text-pink-400">Certification Title</label>
-                              <input type="text" value={item.title} onChange={e => { const u = [...certs]; u[index].title = e.target.value; setCerts(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-semibold mb-1 text-pink-400">Issuer / Organization</label>
-                              <input type="text" value={item.issuer} onChange={e => { const u = [...certs]; u[index].issuer = e.target.value; setCerts(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-semibold mb-1 text-pink-400">Year</label>
-                              <input type="text" value={item.year} onChange={e => { const u = [...certs]; u[index].year = e.target.value; setCerts(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-semibold mb-1 text-pink-400">Location</label>
-                              <input type="text" value={item.location || ''} onChange={e => { const u = [...certs]; u[index].location = e.target.value; setCerts(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
-                            </div>
-
-                            {/* Bullet points for Certifications */}
-                            <div className="md:col-span-2 space-y-2 pt-2 border-t border-pink-500/15">
-                              <div className="flex items-center justify-between">
-                                <label className="text-xs font-semibold text-pink-300">Bullet Points</label>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const u = [...certs];
-                                    u[index].points = [...(u[index].points || []), 'New credential highlight'];
-                                    setCerts(u);
-                                  }}
-                                  className="text-xs px-2 py-0.5 rounded bg-pink-600/80 hover:bg-pink-600 text-white flex items-center gap-1"
-                                >
-                                  <Plus className="w-3 h-3" /> Add Bullet Point
-                                </button>
-                              </div>
-                              {(item.points || []).map((pt, pIdx) => (
-                                <div key={pIdx} className="flex gap-2">
-                                  <input
-                                    type="text"
-                                    value={pt}
-                                    onChange={e => {
-                                      const u = [...certs];
-                                      if (!u[index].points) u[index].points = [];
-                                      u[index].points[pIdx] = e.target.value;
-                                      setCerts(u);
-                                    }}
-                                    className="flex-1 p-2 rounded-lg border text-xs bg-slate-900 border-slate-700 text-white"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const u = [...certs];
-                                      u[index].points = (u[index].points || []).filter((_, i) => i !== pIdx);
-                                      setCerts(u);
-                                    }}
-                                    className="p-1.5 text-red-400 hover:bg-red-500/10 rounded"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
 
                   {/* Affiliations & Voluntary */}
                   {expSubTab === 'voluntary' && (
@@ -1231,51 +1201,355 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     </div>
                   )}
 
-                  {/* Education Qualifications */}
-                  {expSubTab === 'education' && (
+                </div>
+              )}
+
+              {/* QUALIFICATION TAB (Education and Certifications) */}
+              {activeTab === 'qualification' && (
+                <div className="space-y-6 max-w-4xl mx-auto">
+                  <div className="pb-2 border-b border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <GraduationCap className="w-5 h-5 text-purple-400" /> Education, Training & Certifications
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        Manage academic degree qualifications and professional training courses & certifications.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleSaveAll}
+                      disabled={isSaving}
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 flex items-center gap-2 shadow-lg shadow-purple-600/30 cursor-pointer shrink-0 self-start sm:self-auto"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+                    </button>
+                  </div>
+
+                  {/* Sub-tabs for Qualification: Education & Certifications */}
+                  <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-950/70 border border-purple-500/20">
+                    <button
+                      onClick={() => setQualSubTab('education')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        qualSubTab === 'education'
+                          ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      <School className="w-3.5 h-3.5" />
+                      <span>Education ({education.length})</span>
+                    </button>
+                    <button
+                      onClick={() => setQualSubTab('certs')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        qualSubTab === 'certs'
+                          ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      <Award className="w-3.5 h-3.5" />
+                      <span>Training & Certifications ({certs.length})</span>
+                    </button>
+                  </div>
+
+                  {/* 1. Education Subtab */}
+                  {qualSubTab === 'education' && (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <h4 className="text-sm font-semibold text-purple-300">Academic Education Qualifications</h4>
                         <button
-                          onClick={() => setEducation([...education, { discipline: 'Bachelor of Pharmacy (B. Pharm)', institution: 'University of Information Technology & Sciences (UITS)', timeline: '2026 (Final Year)', location: 'Dhaka, Bangladesh', result: 'CGPA 3.85', badge: 'Honors', group: 'Faculty of Pharmacy' }])}
-                          className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700"
+                          onClick={() =>
+                            setEducation([
+                              ...education,
+                              {
+                                discipline: 'Degree Name',
+                                institution: 'Institution Name',
+                                timeline: 'Year',
+                                location: 'Dhaka, Bangladesh',
+                                result: 'GPA / CGPA',
+                                badge: 'Honors',
+                                group: 'Faculty / Group',
+                              },
+                            ])
+                          }
+                          className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 cursor-pointer shadow-md"
                         >
                           <Plus className="w-3.5 h-3.5" /> Add Degree
                         </button>
                       </div>
 
                       {education.map((edu, index) => (
-                        <div key={index} className="p-4 rounded-2xl border border-purple-500/25 bg-slate-950/70 space-y-3 relative">
+                        <div
+                          key={index}
+                          className="p-4 rounded-2xl border border-purple-500/25 bg-slate-950/70 space-y-3 relative"
+                        >
                           <button
                             onClick={() => setEducation(education.filter((_, i) => i !== index))}
-                            className="absolute top-4 right-4 p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg"
+                            className="absolute top-4 right-4 p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-8">
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Discipline / Degree</label>
-                              <input type="text" value={edu.discipline} onChange={e => { const u = [...education]; u[index].discipline = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Discipline / Degree
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.discipline}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].discipline = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Institution</label>
-                              <input type="text" value={edu.institution} onChange={e => { const u = [...education]; u[index].institution = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Institution
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.institution}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].institution = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Timeline</label>
-                              <input type="text" value={edu.timeline} onChange={e => { const u = [...education]; u[index].timeline = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Institution Website URL
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.institutionUrl || ''}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].institutionUrl = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                                placeholder="https://..."
+                              />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Location</label>
-                              <input type="text" value={edu.location} onChange={e => { const u = [...education]; u[index].location = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Timeline / Year
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.timeline}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].timeline = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Result / Grade</label>
-                              <input type="text" value={edu.result} onChange={e => { const u = [...education]; u[index].result = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Location
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.location}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].location = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold mb-1 text-purple-400">Group / Major</label>
-                              <input type="text" value={edu.group || ''} onChange={e => { const u = [...education]; u[index].group = e.target.value; setEducation(u); }} className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white" />
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Result / Grade
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.result}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].result = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-purple-400">
+                                Group / Major / Department
+                              </label>
+                              <input
+                                type="text"
+                                value={edu.group || ''}
+                                onChange={(e) => {
+                                  const u = [...education];
+                                  u[index].group = e.target.value;
+                                  setEducation(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 2. Certifications Subtab */}
+                  {qualSubTab === 'certs' && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-semibold text-pink-300">
+                          Courses & Professional Certifications
+                        </h4>
+                        <button
+                          onClick={() =>
+                            setCerts([
+                              ...certs,
+                              {
+                                title: 'New Course Title',
+                                issuer: 'Institute / Issuer',
+                                year: '2026',
+                                location: 'Online',
+                                grade: 'Completed',
+                                group: 'Professional Training',
+                                organizationUrl: 'https://',
+                              },
+                            ])
+                          }
+                          className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700 cursor-pointer shadow-md"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Add Course / Certification
+                        </button>
+                      </div>
+
+                      {certs.map((item, index) => (
+                        <div
+                          key={index}
+                          className="p-4 rounded-2xl border border-pink-500/25 bg-slate-950/70 space-y-3 relative"
+                        >
+                          <button
+                            onClick={() => setCerts(certs.filter((_, i) => i !== index))}
+                            className="absolute top-4 right-4 p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-8">
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Course Name / Title
+                              </label>
+                              <input
+                                type="text"
+                                value={item.title}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].title = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Institute / Issuer
+                              </label>
+                              <input
+                                type="text"
+                                value={item.issuer}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].issuer = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Website URL
+                              </label>
+                              <input
+                                type="text"
+                                value={item.organizationUrl || ''}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].organizationUrl = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                                placeholder="https://..."
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Department / Group
+                              </label>
+                              <input
+                                type="text"
+                                value={item.group || ''}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].group = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                                placeholder="e.g. Professional Training or Short Course"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Year
+                              </label>
+                              <input
+                                type="text"
+                                value={item.year}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].year = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Location
+                              </label>
+                              <input
+                                type="text"
+                                value={item.location || ''}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].location = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                                placeholder="Online"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-pink-400">
+                                Grade / Status
+                              </label>
+                              <input
+                                type="text"
+                                value={item.grade || ''}
+                                onChange={(e) => {
+                                  const u = [...certs];
+                                  u[index].grade = e.target.value;
+                                  setCerts(u);
+                                }}
+                                className="w-full p-2.5 rounded-xl border text-sm bg-slate-900 border-slate-700 text-white"
+                                placeholder="Completed"
+                              />
                             </div>
                           </div>
                         </div>

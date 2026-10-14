@@ -33,6 +33,8 @@ export interface CertificationItem {
   year: string;
   location?: string;
   organizationUrl?: string;
+  grade?: string;
+  group?: string;
   points?: string[];
 }
 
@@ -86,6 +88,7 @@ export interface LanguageProficiency {
   level: string;
   percentage: number;
   description?: string;
+  keywords?: string[];
 }
 
 export const PORTFOLIO_DATA = {
@@ -109,40 +112,51 @@ export const PORTFOLIO_DATA = {
     footerBadgeText: 'Lubna Akter Portfolio',
     footerRightsText: 'All rights reserved.',
     summary:
-      'Pharmacy student with hands-on exposure to pharmacology, drug information analysis, and laboratory-based pharmaceutical research, complemented by practical experience in medical writing and healthcare content development. Skilled in data interpretation, quality-focused documentation, and cross-functional collaboration, with strong attention to detail. Seeking an entry-level role in pharmaceutical research, drug information, or healthcare communication to apply analytical and communication skills toward evidence-based outcomes.',
+      'Pharmacy student with hands-on exposure to pharmacology, drug information analysis, and laboratory-based pharmaceutical research, complemented by practical experience in medical writing and healthcare content development. Skilled in data interpretation, quality-focused documentation, and cross-functional collaboration, with strong attention to detail.',
   },
 
   coreCompetencies: [
-    'Pharmacology & Pharmacotherapy',
-    'Prescription & Dispensing Support',
-    'Pharmaceutical & Laboratory Research',
-    'Medical Writing & Healthcare Content Development',
-    'Attention to Detail & Accuracy',
-    'Drug Information & Interaction Analysis',
-    'Patient Counseling & Communication',
-    'GMP/GLP & Quality Standards Awareness',
-    'Pharma Market & Data Analysis',
-    'Critical Thinking & Problem-Solving',
+    'Pharmacology',
+    'Medicinal Chemistry',
+    'Pharmaceutical Analysis',
+    'Quality Control',
+    'Pharmaceutical Technology',
+    'Pharmacognosy',
+    'Microbiology',
+    'Biopharmaceutics',
+    'Clinical Pharmacy',
+    'Hospital Pharmacy',
+    'Regulatory Affairs',
+    'Toxicology',
+    'Pharmaceutical Biotechnology',
   ],
 
   softSkills: [
-    'Leadership & Team Motivation',
-    'Cross-Functional Collaboration',
-    'Ethical Judgment & Regulatory Compliance Mindset',
-    'Adaptability & Quick Learning',
-    'Negotiation & Persuasive Communication',
-    'Influencing & Stakeholder Engagement',
-    'Time Management & Multitasking',
-    'Patient-Centered Empathy & Confidentiality',
+    'Pharmaceutical Research',
+    'Laboratory Techniques',
+    'Drug Information Analysis',
+    'Quality Control Awareness',
+    'Regulatory Compliance',
+    'Scientific Writing',
+    'Critical Thinking',
+    'Attention to Detail',
+    'Problem Solving',
+    'Team Collaboration',
+    'Time Management',
+    'Adaptability',
   ],
 
   computerLiteracy: [
-    'MS Office Suite (Word, Excel, PowerPoint)',
-    'PubMed & Google Scholar Literature Search',
-    'SPSS & Excel-Based Statistical Analysis',
-    'AI Tools (ChatGPT, Claude)',
-    'Reference Management (Mendeley)',
-    'ChemDraw (Chemical Structure Drawing)',
+    'Microsoft Word',
+    'Microsoft Excel',
+    'Microsoft PowerPoint',
+    'PubMed',
+    'Google Scholar',
+    'Mendeley',
+    'SPSS',
+    'Literature Search',
+    'Statistical Analysis Support',
+    'ChemDraw',
   ],
 
   // Complete educational qualifications from the official uploaded document
@@ -151,10 +165,10 @@ export const PORTFOLIO_DATA = {
       discipline: 'Bachelor of Pharmacy (B. Pharm)',
       institution: 'University of Information Technology & Sciences (UITS)',
       institutionUrl: 'https://uits.edu.bd',
-      timeline: '4th Year (In Progress)',
+      timeline: '4th Year',
       location: 'Dhaka, Bangladesh',
       result: '3.37 / 4.00',
-      badge: 'In Progress (4th Year)',
+      badge: '4th Year',
       group: 'Faculty of Pharmacy',
     },
     {
@@ -202,12 +216,12 @@ export const PORTFOLIO_DATA = {
   researchProjects: [
     {
       id: 'commelina',
-      title: 'Evaluation of Anti-Inflammatory Activity of Methanolic and Ethanolic Extracts of Commelina erecta by Protein Denaturation and HRBC Membrane Stabilization Assays (Ongoing)',
+      title: 'Anti-Inflammatory Activity of Commelina erecta Extracts (Ongoing)',
       role: 'Co-Researcher',
       status: 'Running Research Project',
       institution: 'University of Information Technology & Sciences',
       description:
-        'Evaluating anti-inflammatory activity of Commelina erecta extracts via protein denaturation and HRBC membrane stabilization assays.',
+        'Evaluation of Anti-Inflammatory Activity of Methanolic and Ethanolic Extracts of Commelina erecta by Protein Denaturation and HRBC Membrane Stabilization Assays',
       highlights: [
         'Methanolic & ethanolic botanical extraction protocols',
         'In vitro protein denaturation inhibition assay',
@@ -242,12 +256,18 @@ export const PORTFOLIO_DATA = {
       issuer: 'BioPC',
       organizationUrl: 'https://biopc.org/',
       year: '2024',
+      location: 'Online',
+      grade: 'Completed',
+      group: 'Professional Training',
     },
     {
-      title: 'The Medicine Concept Course (10th Batch)',
+      title: 'Medicine Concept Plus',
       issuer: 'Clear Concept',
       organizationUrl: 'https://clearconcept.com.bd/',
-      year: 'Course Certification',
+      year: '2026',
+      location: 'Online',
+      grade: 'Completed',
+      group: 'Short Course',
     },
   ],
 
@@ -318,10 +338,11 @@ export const PORTFOLIO_DATA = {
   languages: [
     {
       id: 'bn',
-      language: 'Bengali (বাংলা)',
-      level: 'Native / First Language',
+      language: 'Bengali',
+      level: 'Native',
       percentage: 100,
       description: 'Mother tongue, fully bilingual in academic, clinical, and interpersonal communication.',
+      keywords: ['Mother Tongue', 'Literature & Writing', 'Clinical Counseling'],
     },
     {
       id: 'en',
@@ -329,6 +350,7 @@ export const PORTFOLIO_DATA = {
       level: 'Professional Working Proficiency',
       percentage: 70,
       description: 'Primary medium for pharmaceutical literature review, medical writing, and clinical reports.',
+      keywords: ['Fluency in English', 'Literature & Writing', 'Clinical Counseling'],
     },
   ] as LanguageProficiency[],
 
@@ -338,58 +360,48 @@ export const PORTFOLIO_DATA = {
     { subject: 'Medical Writing', A: 80 },
   ],
 
-  // Previous Personal Interests structure preferred by user:
-  // Wanderlust (Travel) • Otaku (Anime & K-Dramas) • Glam (Makeup Artistry & Skincare) • Aesthetic Journaling • Foodie (Culinary Exploration)
+  // Personal Passions & Creative Pursuits as requested:
+  // Wanderlust (Travel) • Otaku (Anime & K-Dramas) • Glam (Makeup Artistry & Skincare) • Aesthetic Journaling
   personalInterests: [
     {
       id: 'travel',
       title: 'Wanderlust (Travel)',
-      category: 'Exploration & Perspective',
+      category: 'Chasing Calm & Pretty Views',
       icon: 'Compass',
-      shortDesc: 'Exploring scenic landscapes, coastal serenity, and cultural heritage.',
+      shortDesc: 'The ocean is my all-time favorite. I also love nature and peaceful village vibes.',
       detailedDesc:
-        'Passionate about scenic journeys, discovering local heritage sites, ocean coastlines, and diverse traditions that broaden horizons and foster adaptability.',
-      keywords: ['Ocean coasts', 'Cultural heritage', 'Nature trails', 'Scenic photography'],
+        'The ocean is my all-time favorite. I also love nature and peaceful village vibes, and I’m always up for visiting aesthetic places. For me, the journey is half the fun.',
+      keywords: ['Ocean views', 'Village life', 'Nature'],
     },
     {
       id: 'otaku',
       title: 'Otaku (Anime & K-Dramas)',
-      category: 'Narrative & Media Arts',
+      category: 'Stories & Little Bits of Magic',
       icon: 'Tv',
-      shortDesc: 'Romantic comedy K-dramas, ocean aesthetics, and character-driven anime.',
+      shortDesc: 'Big fan of rom-com anime and fantasy anime with a touch of magic.',
       detailedDesc:
-        'Avid enthusiast of romantic comedies, immersive ocean-themed and slice-of-life anime series, appreciating expressive narrative arcs, visual direction, and emotional musical scores.',
-      keywords: ['Rom-com K-Dramas', 'Studio visuals', 'Soundtracks', 'Storytelling'],
+        'I’m a big fan of rom-com anime and fantasy anime with a touch of magic. I also love rom-com K-dramas when I want something sweet and fun to watch.',
+      keywords: ['Rom-com anime', 'Fantasy anime', 'Rom-com K-dramas'],
     },
     {
       id: 'glam',
       title: 'Glam (Makeup Artistry & Skincare)',
-      category: 'Cosmetic Art & Formulations',
+      category: 'More Than Just a Hobby',
       icon: 'Sparkles',
-      shortDesc: 'Certified makeup artist specializing in eye makeup styling and cosmetic science.',
+      shortDesc: 'Makeup is my passion with courses and certificates earned along the way.',
       detailedDesc:
-        'Certified makeup artist focusing on precision eye styling, graphic liner techniques, color theory, and evaluating cosmetic formulations with pharmaceutical skin-safety awareness.',
-      keywords: ['Eye artistry', 'Blending precision', 'Color theory', 'Dermatological care'],
+        'Makeup is my passion, and I’ve done a few makeup courses and earned some certificates along the way. Eye makeup is my favorite thing to create.',
+      keywords: ['Eye makeup', 'Makeup artistry', 'Skincare'],
     },
     {
       id: 'journaling',
       title: 'Aesthetic Journaling',
-      category: 'Creative Expression & Reflection',
+      category: 'Keeping My Memories',
       icon: 'BookOpen',
-      shortDesc: 'Curating reflections on fashion, culinary journeys, travel, and pharma concepts.',
+      shortDesc: 'Vlogging and capturing days and trips on camera to look back on every moment.',
       detailedDesc:
-        'Analog and digital journaling documenting daily reflections, fashion styling, travel diaries, culinary reviews, and conceptual pharmaceutical study notes with artistic layouts.',
-      keywords: ['Creative layouts', 'Fashion notes', 'Pharma insights', 'Visual memory'],
-    },
-    {
-      id: 'foodie',
-      title: 'Foodie (Culinary Exploration)',
-      category: 'Culinary Arts & Food Chemistry',
-      icon: 'Utensils',
-      shortDesc: 'Exploring traditional culinary recipes, fusion flavors, and food chemistry.',
-      detailedDesc:
-        'Enthusiastic about heritage Bangladeshi dishes, experimental fusion cuisine, and investigating the molecular food chemistry behind flavors, spices, and bioavailability.',
-      keywords: ['Heritage recipes', 'Spice chemistry', 'Fusion cooking', 'Flavor science'],
+        'I love vlogging and capturing my days and trips on camera, so I can look back on every moment and relive the memories.',
+      keywords: ['Vlogging', 'Memory keeping', 'Visual aesthetics'],
     },
   ] as PersonalInterestItem[],
 
@@ -412,11 +424,11 @@ export const PORTFOLIO_DATA = {
 
   sectionTitles: {
     research: 'Pharmaceutical Research & Presentations',
-    skills: 'Skills & Technical Knowledge',
-    experience: 'Work Experience & Leadership',
-    education: 'Academic Background',
-    languages: 'Language Proficiency',
-    about: 'Personal Passions & Creative Pursuits',
+    skills: 'Pharmaceutical Knowledge & Skills',
+    experience: 'Work Experience & Affiliations',
+    education: 'Education, Training & Certifications',
+    languages: 'Language Skills',
+    about: 'Passions & Creative Pursuits',
     references: 'Academic & Professional References',
     contact: 'Contact & Collaboration',
   },

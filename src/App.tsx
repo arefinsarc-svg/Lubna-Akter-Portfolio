@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { PortfolioProvider } from './context/PortfolioContext';
@@ -6,18 +6,20 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { PasswordModal } from './components/PasswordModal';
 import { ThreeBackgroundCanvas } from './components/ThreeBackgroundCanvas';
 import { Navbar } from './components/Navbar';
-import { HeroSection } from './components/HeroSection';
-import { ResearchSection } from './components/ResearchSection';
-import { CompetenciesSection } from './components/CompetenciesSection';
-import { ExperienceSection } from './components/ExperienceSection';
-import { EducationSection } from './components/EducationSection';
-import { LanguageSection } from './components/LanguageSection';
-import { AboutSection } from './components/AboutSection';
-import { ContactSection } from './components/ContactSection';
 import { ScrollSection3D } from './components/ScrollSection3D';
 import { Footer } from './components/Footer';
 import { ResumeModal } from './components/ResumeModal';
 import { FloatingControls } from './components/FloatingControls';
+import { Sparkles } from 'lucide-react';
+
+const HeroSection = lazy(() => import('./components/HeroSection').then(m => ({ default: m.HeroSection })));
+const ResearchSection = lazy(() => import('./components/ResearchSection').then(m => ({ default: m.ResearchSection })));
+const CompetenciesSection = lazy(() => import('./components/CompetenciesSection').then(m => ({ default: m.CompetenciesSection })));
+const ExperienceSection = lazy(() => import('./components/ExperienceSection').then(m => ({ default: m.ExperienceSection })));
+const EducationSection = lazy(() => import('./components/EducationSection').then(m => ({ default: m.EducationSection })));
+const LanguageSection = lazy(() => import('./components/LanguageSection').then(m => ({ default: m.LanguageSection })));
+const AboutSection = lazy(() => import('./components/AboutSection').then(m => ({ default: m.AboutSection })));
+const ContactSection = lazy(() => import('./components/ContactSection').then(m => ({ default: m.ContactSection })));
 
 function PortfolioApp() {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
@@ -39,39 +41,50 @@ function PortfolioApp() {
       {/* Fixed Top Navigation Bar with Theme Switcher */}
       <Navbar />
 
-      {/* Main Content Flow with 3D IntersectionObserver scroll entrance animations */}
+      {/* Main Content Flow with Code-Splitting Suspense & 3D IntersectionObserver scroll entrance animations */}
       <main className="relative z-10">
-        <ScrollSection3D>
-          <HeroSection />
-        </ScrollSection3D>
+        <Suspense
+          fallback={
+            <div className="py-24 flex items-center justify-center">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-400/30 text-purple-300 text-xs font-mono animate-pulse">
+                <Sparkles className="w-4 h-4 text-purple-400 animate-spin" />
+                <span>Loading section...</span>
+              </div>
+            </div>
+          }
+        >
+          <ScrollSection3D>
+            <HeroSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <ResearchSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <ResearchSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <CompetenciesSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <CompetenciesSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <ExperienceSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <ExperienceSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <EducationSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <EducationSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <LanguageSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <LanguageSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <AboutSection />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <AboutSection />
+          </ScrollSection3D>
 
-        <ScrollSection3D>
-          <ContactSection onOpenResume={() => setIsResumeOpen(true)} />
-        </ScrollSection3D>
+          <ScrollSection3D>
+            <ContactSection onOpenResume={() => setIsResumeOpen(true)} />
+          </ScrollSection3D>
+        </Suspense>
       </main>
 
       {/* Footer with social channels, contact methods, and centered Lubna Akter Portfolio */}

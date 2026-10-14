@@ -14,7 +14,8 @@ import {
   Phone,
   GraduationCap,
   School,
-  ChevronDown
+  ChevronDown,
+  UserCheck
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -156,11 +157,11 @@ export const AboutSection: React.FC = () => {
                       <p className="text-purple-200/90 leading-relaxed bg-purple-950/40 p-2.5 rounded-xl border border-purple-500/30">
                         {interest.detailedDesc}
                       </p>
-                      <div className="flex flex-wrap gap-1 pt-1">
+                      <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1.5">
                         {interest.keywords.map((kw, kIdx) => (
                           <span
                             key={kw || kIdx}
-                            className="text-[9px] font-mono bg-purple-500/10 text-purple-200 px-1.5 py-0.5 rounded border border-purple-500/20"
+                            className="text-[9px] sm:text-[10px] font-mono bg-purple-500/10 text-purple-200 px-2 py-0.5 rounded-md border border-purple-500/20 text-center"
                           >
                             {kw}
                           </span>
@@ -184,8 +185,8 @@ export const AboutSection: React.FC = () => {
             className="text-center mb-8 px-2"
           >
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-400/30 text-purple-300 text-[11px] sm:text-xs font-mono mb-2">
-              <BadgeCheck className="w-3.5 h-3.5 text-purple-400" />
-              <span>Academic & Clinical Endorsements</span>
+              <UserCheck className="w-3.5 h-3.5 text-purple-400" />
+              <span>Academic & Professional Endorsements</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight text-center">
               {data.sectionTitles?.references || 'Academic & Professional References'}
@@ -216,9 +217,10 @@ export const AboutSection: React.FC = () => {
                       : 'bg-slate-900/60 border-purple-500/20 hover:border-purple-400/40 shadow-sm hover:bg-slate-900/80'
                   }`}
                 >
-                  {/* Bar Header: Professional BadgeCheck Icon + Referee Name + Down Arrow (Hidden on Mobile) */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-3">
-                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 sm:gap-3.5 text-center sm:text-left w-full sm:w-auto">
+                  {/* Bar Header: On mobile, icon on top of referee name centrally aligned, arrow hidden.
+                      On laptop & tab devices (sm+), icon at the left, then title, and in the right side put an arrow (matching Qualifications section) */}
+                  <div className="flex flex-col sm:flex-row items-center sm:justify-between text-center sm:text-left gap-3">
+                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5 text-center sm:text-left w-full sm:w-auto">
                       <div
                         className={`w-10 sm:w-11 h-10 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-300 ${
                           isExpanded
@@ -226,16 +228,16 @@ export const AboutSection: React.FC = () => {
                             : 'bg-purple-950/60 border-purple-500/30 text-purple-300'
                         }`}
                       >
-                        <BadgeCheck className="w-5 h-5 text-purple-300" />
+                        <UserCheck className="w-5 h-5 text-purple-200" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-base sm:text-lg leading-snug text-center sm:text-left tracking-wide">
+                        <h4 className="font-bold text-white text-base sm:text-lg leading-snug tracking-wide text-center sm:text-left">
                           {ref.name}
                         </h4>
                       </div>
                     </div>
 
-                    {/* Arrow: Hidden in mobile view, displayed on PC/tablets */}
+                    {/* Arrow: for laptop and tab devices (everything except mobile) */}
                     <div className="hidden sm:flex items-center justify-center shrink-0">
                       <span
                         className={`text-[11px] font-mono p-1 rounded-md transition-colors ${
@@ -251,7 +253,7 @@ export const AboutSection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Revealed on hover/click: Clean 2 Columns & 2 Rows, Matching Education Section */}
+                  {/* Revealed on hover/click: Centrally Aligned Details matching modern design */}
                   <AnimatePresence>
                     {isExpanded && (
                       <motion.div
@@ -263,7 +265,7 @@ export const AboutSection: React.FC = () => {
                       >
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5 text-xs sm:text-sm">
                           {/* Row 1, Col 1: Designation */}
-                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-slate-200">
+                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-slate-200 text-center sm:text-left">
                             <GraduationCap className="w-4 h-4 text-purple-400 shrink-0" />
                             <span className="font-medium text-white truncate">
                               {ref.title}
@@ -271,7 +273,7 @@ export const AboutSection: React.FC = () => {
                           </div>
 
                           {/* Row 1, Col 2: Institution */}
-                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-slate-200">
+                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-slate-200 text-center sm:text-left">
                             <School className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className="font-medium text-purple-200 truncate">
                               {ref.institution}
@@ -279,7 +281,7 @@ export const AboutSection: React.FC = () => {
                           </div>
 
                           {/* Row 2, Col 1: Phone */}
-                          <div className="flex items-center justify-center sm:justify-start gap-2.5">
+                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-center sm:text-left">
                             <Phone className="w-4 h-4 text-purple-400 shrink-0" />
                             <a
                               href={`tel:${ref.phone.replace(/[^0-9+]/g, '')}`}
@@ -291,7 +293,7 @@ export const AboutSection: React.FC = () => {
                           </div>
 
                           {/* Row 2, Col 2: Email */}
-                          <div className="flex items-center justify-center sm:justify-start gap-2.5">
+                          <div className="flex items-center justify-center sm:justify-start gap-2.5 text-center sm:text-left">
                             <Mail className="w-4 h-4 text-purple-400 shrink-0" />
                             <a
                               href={`mailto:${ref.email}`}
