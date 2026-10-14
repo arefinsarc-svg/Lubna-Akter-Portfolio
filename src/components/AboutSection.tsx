@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePortfolio } from '../context/PortfolioContext';
+import { useTheme } from '../context/ThemeContext';
 import { 
   Tv, 
   Sparkles, 
@@ -29,6 +30,7 @@ export const AboutSection: React.FC = () => {
 
   const { t } = useLanguage();
   const { data } = usePortfolio();
+  const { isClinical } = useTheme();
 
   const handleRefClick = (idx: number) => {
     // When tapped, stays still and pinned open until another click on the box
@@ -85,9 +87,9 @@ export const AboutSection: React.FC = () => {
 
         {/* Auto-running Right-to-Left Continuous Marquee Track */}
         <div className="mb-20 overflow-hidden relative py-3">
-          {/* Gradient Edge Masks for smooth fade out */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
+          {/* Gradient Edge Masks for smooth fade out (theme-aware: white/slate-50 for clinical, slate-950 for dark) */}
+          <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r ${isClinical ? 'from-slate-50' : 'from-slate-950'} to-transparent z-10 pointer-events-none`} />
+          <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l ${isClinical ? 'from-slate-50' : 'from-slate-950'} to-transparent z-10 pointer-events-none`} />
 
           <div
             className="flex gap-4 sm:gap-5 w-max items-start"

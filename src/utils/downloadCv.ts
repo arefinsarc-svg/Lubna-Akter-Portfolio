@@ -3,18 +3,21 @@
  */
 export const downloadCvFile = () => {
   try {
-    const saved = localStorage.getItem('lubna_portfolio_data_v1');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed?.profile?.customCvUrl) {
-        const link = document.createElement('a');
-        link.href = parsed.profile.customCvUrl;
-        link.download = parsed.profile.customCvName || 'Lubna_Akter_BPharm_Resume.pdf';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        return;
+    for (let i = 1; i <= 11; i++) {
+      const key = i === 1 ? 'lubna_portfolio_data_v1' : `lubna_portfolio_data_v${i}`;
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.profile?.customCvUrl) {
+          const link = document.createElement('a');
+          link.href = parsed.profile.customCvUrl;
+          link.download = parsed.profile.customCvName || 'Lubna_Akter_BPharm_Resume.pdf';
+          link.target = '_blank';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          return;
+        }
       }
     }
   } catch (e) {

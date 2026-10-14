@@ -38,8 +38,8 @@ function PortfolioApp() {
       {/* 3D Ambient Background Canvas - consistent real-time physics in both themes */}
       <ThreeBackgroundCanvas />
 
-      {/* Fixed Top Navigation Bar with Theme Switcher */}
-      <Navbar />
+      {/* Fixed Top Navigation Bar with Theme Switcher and Mobile Dropdown */}
+      <Navbar onOpenResume={() => setIsResumeOpen(true)} />
 
       {/* Main Content Flow with Code-Splitting Suspense & 3D IntersectionObserver scroll entrance animations */}
       <main className="relative z-10">
