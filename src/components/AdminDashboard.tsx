@@ -243,7 +243,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
         
         {/* Simple Clean Header: Only "Portfolio Dashboard" as requested */}
         <div className={`flex items-center justify-between px-3.5 sm:px-6 py-3 sm:py-4 border-b shrink-0 ${
-          isClinical ? 'border-slate-200 bg-slate-50/80' : 'border-purple-500/20 bg-slate-950/80'
+          isClinical ? 'border-purple-100 bg-[#faf9fd]' : 'border-purple-500/20 bg-slate-950/80'
         }`}>
           <div className="flex items-center gap-2.5 sm:gap-3">
             <div
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
             >
               <Sliders className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white">
+            <h2 className={`text-lg sm:text-2xl font-bold tracking-tight ${isClinical ? 'text-slate-900' : 'text-white'}`}>
               Portfolio Dashboard
             </h2>
           </div>
@@ -266,7 +266,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
             <button
               onClick={onClose}
               className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-                isClinical ? 'border-slate-200 hover:bg-slate-100 text-slate-600' : 'border-slate-700 hover:bg-slate-800 text-slate-300'
+                isClinical ? 'border-purple-100 bg-white hover:bg-[#f3f0f9] text-slate-700 shadow-sm' : 'border-slate-700 hover:bg-slate-800 text-slate-300'
               }`}
               aria-label="Close"
             >
@@ -282,7 +282,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
           <aside className={`flex flex-col border-r transition-all duration-300 shrink-0 select-none ${
             isSidebarCollapsed ? 'w-14 sm:w-18' : 'w-48 sm:w-60'
           } ${
-            isClinical ? 'border-slate-200 bg-slate-50/70' : 'border-purple-500/15 bg-slate-950/70'
+            isClinical ? 'border-purple-100 bg-[#faf9fd]' : 'border-purple-500/15 bg-slate-950/70'
           }`}>
             {/* Sidebar Toggle Minimize/Expand Button */}
             <div className="p-2 sm:p-3 border-b flex items-center justify-between border-inherit">
@@ -318,7 +318,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                       isActive
                         ? 'text-white shadow-md shadow-purple-600/30 font-semibold'
                         : isClinical
-                        ? 'text-slate-600 hover:bg-slate-200/70 hover:text-slate-900'
+                        ? 'text-slate-700 hover:bg-white hover:text-purple-700 shadow-none hover:shadow-sm'
                         : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200'
                     }`}
                   >
@@ -355,7 +355,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
           </aside>
 
           {/* Right Content Panel */}
-          <main className="flex-1 flex flex-col overflow-hidden bg-slate-900/40">
+          <main className={`flex-1 flex flex-col overflow-hidden ${isClinical ? 'bg-[#f8f7fc]' : 'bg-slate-900/40'}`}>
             
             {/* Scrollable Form Content */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
@@ -2421,7 +2421,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
 
             {/* Bottom Status & Quick Save Footer Bar */}
             <div className={`px-6 py-3 border-t flex items-center justify-end shrink-0 ${
-              isClinical ? 'border-slate-200 bg-slate-50' : 'border-purple-500/20 bg-slate-950/90'
+              isClinical ? 'border-purple-100 bg-[#faf9fd]' : 'border-purple-500/20 bg-slate-950/90'
             }`}>
               <div className="flex items-center gap-3">
                 <button
@@ -2441,7 +2441,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl text-xs font-medium border border-slate-700 hover:bg-slate-800 text-slate-300 transition-colors cursor-pointer"
+                  className={`px-4 py-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
+                    isClinical ? 'border-purple-200 bg-white hover:bg-[#f3f0f9] text-slate-700 shadow-sm' : 'border-slate-700 hover:bg-slate-800 text-slate-300'
+                  }`}
                 >
                   Close
                 </button>

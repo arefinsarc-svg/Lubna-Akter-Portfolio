@@ -71,7 +71,7 @@ interface PortfolioContextType {
   resetToDefault: () => void;
 }
 
-const STORAGE_KEY = 'lubna_portfolio_data_v11';
+const STORAGE_KEY = 'lubna_portfolio_data_v19';
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
@@ -90,6 +90,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         'lubna_portfolio_data_v8',
         'lubna_portfolio_data_v9',
         'lubna_portfolio_data_v10',
+        'lubna_portfolio_data_v11',
+        'lubna_portfolio_data_v12',
+        'lubna_portfolio_data_v13',
+        'lubna_portfolio_data_v14',
+        'lubna_portfolio_data_v15',
+        'lubna_portfolio_data_v16',
+        'lubna_portfolio_data_v17',
+        'lubna_portfolio_data_v18',
       ].forEach(k => {
         try { localStorage.removeItem(k); } catch (_) {}
       });
@@ -119,12 +127,40 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (!mergedProfile.customSocialLinks) {
           mergedProfile.customSocialLinks = [];
         }
+        if (
+          !mergedProfile.photoUrl ||
+          mergedProfile.photoUrl === '/Lubna-Akter-Pharmacist-Profile-Photo.png' ||
+          mergedProfile.photoUrl.includes('portrait_lubna') ||
+          mergedProfile.photoUrl.includes('lubna_niqab_portrait') ||
+          mergedProfile.photoUrl.includes('lubna_profile_photo') ||
+          mergedProfile.photoUrl.includes('lubna_pakistani_pharmacist')
+        ) {
+          mergedProfile.photoUrl = PORTFOLIO_DATA.profile.photoUrl;
+        }
 
         const mergedSectionTitles = {
           ...PORTFOLIO_DATA.sectionTitles,
           ...(parsed.sectionTitles || {}),
           skills: 'Pharmaceutical Knowledge & Skills',
         };
+
+        const migratedProjects = ((parsed.researchProjects || PORTFOLIO_DATA.researchProjects) as ResearchProject[]).map(p => {
+          if (p.id === 'hepatitis' || p.status?.includes('Ranked Top 3')) {
+            return { ...p, status: 'Ranked Top 3' };
+          }
+          return p;
+        });
+
+        const migratedInterests = ((parsed.personalInterests || PORTFOLIO_DATA.personalInterests) as PersonalInterestItem[]).map(item => {
+          if (item.id === 'journaling' || item.title?.includes('Aesthetic Journaling')) {
+            return {
+              ...item,
+              shortDesc: 'Capturing little moments, beautiful places, and everyday adventures through my lens, creating a visual diary of memories I can revisit and relive.',
+              detailedDesc: 'Capturing little moments, beautiful places, and everyday adventures through my lens, creating a visual diary of memories I can revisit and relive.',
+            };
+          }
+          return item;
+        });
 
         return {
           ...PORTFOLIO_DATA,
@@ -133,10 +169,20 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           coreCompetencies: parsed.coreCompetencies || PORTFOLIO_DATA.coreCompetencies,
           softSkills: parsed.softSkills || PORTFOLIO_DATA.softSkills,
           computerLiteracy: parsed.computerLiteracy || PORTFOLIO_DATA.computerLiteracy,
-          education: ((parsed.education || PORTFOLIO_DATA.education) as EducationItem[]).map(e => ({
-            ...e,
-            timeline: (e.timeline || '').replace(/\s*\(In Progress\)/gi, '').trim(),
-          })),
+          education: ((parsed.education || PORTFOLIO_DATA.education) as EducationItem[]).map(e => {
+            let timeline = (e.timeline || '').replace(/\s*\(In Progress\)/gi, '').trim();
+            let badge = e.badge;
+            if (e.discipline.includes('Bachelor of Pharmacy') || e.discipline.includes('B. Pharm')) {
+              timeline = '2027';
+              badge = '2027';
+            }
+            return {
+              ...e,
+              timeline,
+              badge,
+            };
+          }),
+          researchProjects: migratedProjects,
           workExperience: parsed.workExperience || PORTFOLIO_DATA.workExperience,
           entrepreneurialExperience: parsed.entrepreneurialExperience || PORTFOLIO_DATA.entrepreneurialExperience,
           certifications: ((parsed.certifications || PORTFOLIO_DATA.certifications) as CertificationItem[]).map(c => ({
@@ -146,7 +192,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           extraCurricular: parsed.extraCurricular || PORTFOLIO_DATA.extraCurricular,
           references: parsed.references || PORTFOLIO_DATA.references,
           languages: parsed.languages && parsed.languages.length > 0 ? parsed.languages : PORTFOLIO_DATA.languages,
-          personalInterests: parsed.personalInterests && parsed.personalInterests.length > 0 ? parsed.personalInterests : PORTFOLIO_DATA.personalInterests,
+          personalInterests: migratedInterests,
           sectionTitles: mergedSectionTitles,
         };
       }

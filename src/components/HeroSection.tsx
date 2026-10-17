@@ -7,7 +7,7 @@ import { User, Box, Download, Send } from 'lucide-react';
 import { downloadCvFile } from '../utils/downloadCv';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import lubnaProfilePic from '../assets/images/Lubna-Akter-Pharmacist-Profile-Photo.png';
+import lubnaProfilePic from '../assets/images/lubna_laboratory_photo_1791695973616.jpg';
 
 interface HeroSectionProps {
   onOpenResume?: () => void;
@@ -163,13 +163,16 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
             </div>
 
             {/* Harmonized Identical Responsive Sizing for Profile Picture and 3D Molecule Box */}
-            <div className="w-full max-w-[280px] xs:max-w-[310px] sm:max-w-[350px] md:max-w-[380px] mx-auto aspect-[3/4]">
+            <div className="w-full max-w-[280px] xs:max-w-[310px] sm:max-w-[350px] md:max-w-[380px] mx-auto aspect-[3/4] relative">
+              {/* Ambient circular aura glow for modern depth */}
+              <div className="absolute -inset-3 bg-gradient-to-tr from-purple-600/25 via-indigo-500/20 to-pink-500/20 rounded-full blur-2xl pointer-events-none opacity-80" />
+
               {viewMode === 'photo' ? (
                 <div
-                  className={`relative w-full h-full rounded-2xl overflow-hidden border shadow-2xl group lavender-glow transition-all ${
+                  className={`relative w-full h-full rounded-3xl overflow-hidden border shadow-2xl group lavender-glow transition-all ${
                     isClinical
-                      ? 'border-purple-200 bg-white shadow-slate-200/60'
-                      : 'border-purple-500/30 bg-slate-900/90'
+                      ? 'border-purple-200 bg-white shadow-slate-200/60 ring-1 ring-purple-100'
+                      : 'border-purple-500/30 bg-slate-900/90 ring-1 ring-purple-500/20'
                   }`}
                 >
                   {/* User's Profile Photo */}
@@ -181,7 +184,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
                   />
                 </div>
               ) : (
-                <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl transition-all">
+                <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl transition-all border border-purple-500/30">
                   <ThreeMolecularViewer className="w-full h-full" />
                 </div>
               )}

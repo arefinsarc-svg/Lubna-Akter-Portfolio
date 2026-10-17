@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePortfolio } from '../context/PortfolioContext';
-import { useTheme } from '../context/ThemeContext';
 import { 
   Tv, 
   Sparkles, 
@@ -19,8 +18,10 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const AboutSection: React.FC = () => {
+  const { isClinical } = useTheme();
   // State for the single expanded passion card: only that card expands on click
   const [expandedCardKey, setExpandedCardKey] = useState<string | null>(null);
 
@@ -30,7 +31,6 @@ export const AboutSection: React.FC = () => {
 
   const { t } = useLanguage();
   const { data } = usePortfolio();
-  const { isClinical } = useTheme();
 
   const handleRefClick = (idx: number) => {
     // When tapped, stays still and pinned open until another click on the box
@@ -87,9 +87,13 @@ export const AboutSection: React.FC = () => {
 
         {/* Auto-running Right-to-Left Continuous Marquee Track */}
         <div className="mb-20 overflow-hidden relative py-3">
-          {/* Gradient Edge Masks for smooth fade out (theme-aware: white/slate-50 for clinical, slate-950 for dark) */}
-          <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r ${isClinical ? 'from-slate-50' : 'from-slate-950'} to-transparent z-10 pointer-events-none`} />
-          <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l ${isClinical ? 'from-slate-50' : 'from-slate-950'} to-transparent z-10 pointer-events-none`} />
+          {/* Gradient Edge Masks for smooth fade out - theme aware */}
+          <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r z-10 pointer-events-none ${
+            isClinical ? 'from-slate-50 to-transparent' : 'from-slate-950 to-transparent'
+          }`} />
+          <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l z-10 pointer-events-none ${
+            isClinical ? 'from-slate-50 to-transparent' : 'from-slate-950 to-transparent'
+          }`} />
 
           <div
             className="flex gap-4 sm:gap-5 w-max items-start"
@@ -178,7 +182,7 @@ export const AboutSection: React.FC = () => {
         </div>
 
         {/* Dedicated Professional References Section */}
-        <div id="references" className="max-w-4xl mx-auto pt-4">
+        <div id="references" className="max-w-4xl mx-auto pt-4 scroll-mt-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

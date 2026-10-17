@@ -68,12 +68,37 @@ export const ThreeBackgroundCanvas: React.FC = () => {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Particle Material
+    // Helper to generate circular particle sprite (replacing square shapes with smooth circles in both modes)
+    const createCircleTexture = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, 64, 64);
+        const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(0.85, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(32, 32, 30, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      const texture = new THREE.CanvasTexture(canvas);
+      return texture;
+    };
+
+    const circleTexture = createCircleTexture();
+
+    // Particle Material with circular texture for both light and dark modes
     const pMaterial = new THREE.PointsMaterial({
+      map: circleTexture,
       vertexColors: true,
-      size: 3.5,
+      size: 5.5,
       transparent: true,
-      opacity: themeRef.current ? 0.40 : 0.45,
+      depthWrite: false,
+      opacity: themeRef.current ? 0.45 : 0.60,
       blending: themeRef.current ? THREE.NormalBlending : THREE.AdditiveBlending,
     });
 
@@ -91,7 +116,7 @@ export const ThreeBackgroundCanvas: React.FC = () => {
     const lineMaterial = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: themeRef.current ? 0.30 : 0.22,
+      opacity: themeRef.current ? 0.40 : 0.22,
       blending: themeRef.current ? THREE.NormalBlending : THREE.AdditiveBlending,
     });
 
@@ -148,15 +173,15 @@ export const ThreeBackgroundCanvas: React.FC = () => {
       if (currentThemeClinical !== themeRef.current) {
         currentThemeClinical = themeRef.current;
         if (currentThemeClinical) {
-          pMaterial.color.setHex(0x7c3aed);
+          pMaterial.color.setHex(0xffffff);
           pMaterial.blending = THREE.NormalBlending;
-          pMaterial.opacity = 0.40;
+          pMaterial.opacity = 0.50;
           lineMaterial.blending = THREE.NormalBlending;
-          lineMaterial.opacity = 0.30;
+          lineMaterial.opacity = 0.45;
         } else {
-          pMaterial.color.setHex(0xc084fc);
+          pMaterial.color.setHex(0xffffff);
           pMaterial.blending = THREE.AdditiveBlending;
-          pMaterial.opacity = 0.45;
+          pMaterial.opacity = 0.60;
           lineMaterial.blending = THREE.AdditiveBlending;
           lineMaterial.opacity = 0.22;
         }
@@ -193,7 +218,7 @@ export const ThreeBackgroundCanvas: React.FC = () => {
             const dist = Math.sqrt(distSq);
             const force = (1 - dist / Math.sqrt(interactionRadius)) * 0.4;
             vx += (dx / dist) * force;
-            vy += (dy / dist) * force;
+            vy += (vy / dist) * force;
           }
 
           if (distSq < glowRadius) {
@@ -224,9 +249,10 @@ export const ThreeBackgroundCanvas: React.FC = () => {
         // Update vertex color based on theme and proximity glow
         const g = velocities[i].glow;
         if (currentThemeClinical) {
-          colArray[i * 3] = Math.min(1.0, 0.49 * g);
-          colArray[i * 3 + 1] = Math.min(1.0, 0.23 * g);
-          colArray[i * 3 + 2] = Math.min(1.0, 0.93 * g);
+          // Subtle soft light-gray / white circular ends that blend naturally with light background
+          colArray[i * 3] = Math.min(1.0, 0.84 * g);
+          colArray[i * 3 + 1] = Math.min(1.0, 0.84 * g);
+          colArray[i * 3 + 2] = Math.min(1.0, 0.88 * g);
         } else {
           colArray[i * 3] = Math.min(1.0, 0.75 * g);
           colArray[i * 3 + 1] = Math.min(1.0, 0.52 * g);
@@ -263,13 +289,15 @@ export const ThreeBackgroundCanvas: React.FC = () => {
 
             const alpha = 1.0 - Math.sqrt(distSq) / 70;
             if (currentThemeClinical) {
-              lineColArray[bondIdx * 6] = 0.49 * alpha;
-              lineColArray[bondIdx * 6 + 1] = 0.23 * alpha;
-              lineColArray[bondIdx * 6 + 2] = 0.93 * alpha;
+              // In light mode, subtle white or light-gray shade so it blends naturally with the background
+              const grayShade = 0.85 * alpha;
+              lineColArray[bondIdx * 6] = grayShade;
+              lineColArray[bondIdx * 6 + 1] = grayShade;
+              lineColArray[bondIdx * 6 + 2] = 0.88 * alpha;
 
-              lineColArray[bondIdx * 6 + 3] = 0.49 * alpha;
-              lineColArray[bondIdx * 6 + 4] = 0.23 * alpha;
-              lineColArray[bondIdx * 6 + 5] = 0.93 * alpha;
+              lineColArray[bondIdx * 6 + 3] = grayShade;
+              lineColArray[bondIdx * 6 + 4] = grayShade;
+              lineColArray[bondIdx * 6 + 5] = 0.88 * alpha;
             } else {
               lineColArray[bondIdx * 6] = 0.65 * alpha;
               lineColArray[bondIdx * 6 + 1] = 0.40 * alpha;
@@ -313,6 +341,7 @@ export const ThreeBackgroundCanvas: React.FC = () => {
       renderer.dispose();
       geometry.dispose();
       pMaterial.dispose();
+      circleTexture.dispose();
       lineGeometry.dispose();
       lineMaterial.dispose();
     };

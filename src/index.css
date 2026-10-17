@@ -76,7 +76,7 @@ html.clinical-theme ::selection {
 }
 
 html.clinical-theme ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #faf9fd;
 }
 
 html.clinical-theme ::-webkit-scrollbar-thumb {
@@ -127,16 +127,21 @@ html.clinical-theme .bg-slate-900\/60 {
 }
 
 html.clinical-theme .bg-slate-800 {
-  background-color: #f1f5f9 !important;
+  background-color: #faf9fd !important;
   color: #334155 !important;
 }
 
+html.clinical-theme .bg-purple-950,
+html.clinical-theme .bg-purple-950\/20,
+html.clinical-theme .bg-purple-950\/25,
+html.clinical-theme .bg-purple-950\/30,
 html.clinical-theme .bg-purple-950\/40,
 html.clinical-theme .bg-purple-950\/50,
 html.clinical-theme .bg-purple-950\/60,
 html.clinical-theme .bg-purple-950\/80 {
-  background-color: #f5f3ff !important;
-  border-color: #ddd6fe !important;
+  background-color: #faf8fd !important;
+  border-color: #ede9fe !important;
+  color: #1e293b;
 }
 
 html.clinical-theme .bg-purple-500\/10,
@@ -145,12 +150,12 @@ html.clinical-theme .bg-purple-500\/15 {
   color: #6d28d9 !important;
 }
 
-/* Border adjustments in clinical mode */
+/* Border adjustments in clinical mode - soft clean complementary borders, no dull gray */
 html.clinical-theme .border-purple-500\/20,
 html.clinical-theme .border-purple-500\/30,
 html.clinical-theme .border-slate-800,
 html.clinical-theme .border-slate-700 {
-  border-color: #e2e8f0 !important;
+  border-color: #ede9fe !important;
 }
 
 html.clinical-theme .border-purple-400\/30,
@@ -216,7 +221,7 @@ html.clinical-theme input,
 html.clinical-theme textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border-color: #cbd5e1 !important;
+  border-color: #e9d5ff !important;
 }
 
 html.clinical-theme input:focus,

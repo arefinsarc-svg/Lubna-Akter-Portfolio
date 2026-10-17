@@ -195,7 +195,7 @@ export const ExperienceSection: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <History className="w-4 h-4 text-purple-300 shrink-0" />
+                <History className={`w-4 h-4 transition-all duration-300 ${filter === 'all' ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'text-purple-300'} shrink-0`} />
                 <span className="hidden lg:inline">{t.timeline.all}</span>
               </button>
               <button
@@ -208,7 +208,7 @@ export const ExperienceSection: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Briefcase className="w-4 h-4 text-indigo-300 shrink-0" />
+                <Briefcase className={`w-4 h-4 transition-all duration-300 ${filter === 'work' ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'text-indigo-300'} shrink-0`} />
                 <span className="hidden lg:inline">{t.timeline.work}</span>
               </button>
               <button
@@ -221,7 +221,7 @@ export const ExperienceSection: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Users className="w-4 h-4 text-purple-300 shrink-0" />
+                <Users className={`w-4 h-4 transition-all duration-300 ${filter === 'affiliations' ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'text-purple-300'} shrink-0`} />
                 <span className="hidden lg:inline">{t.timeline.training}</span>
               </button>
             </div>

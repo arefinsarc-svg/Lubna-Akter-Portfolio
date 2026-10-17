@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import {
   Menu,
@@ -31,6 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
   const { t } = useLanguage();
   const { isClinical } = useTheme();
   const { scrollYProgress } = useScroll();
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,6 +40,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    if (mobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
 
   // Close mobile drawer on Escape key
   useEffect(() => {
@@ -118,6 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
 
   return (
     <header
+      ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isClinical
           ? isScrolled
@@ -287,124 +305,40 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
               }`}
             />
 
-            {/* Top Micro-Bar: Portfolio Role & Menu Title */}
-            <div
-              className={`relative z-10 flex items-center justify-between px-5 pt-3.5 pb-2 text-[11px] font-mono tracking-wider uppercase border-b ${
-                isClinical ? 'border-purple-100 text-slate-500' : 'border-purple-500/15 text-slate-400'
-              }`}
-            >
-              <div className="flex items-center gap-1.5 font-semibold text-purple-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Pharmacy Scholar</span>
-              </div>
-              <div className="flex items-center gap-1 text-[10px] opacity-75">
-                <Sparkles className="w-3 h-3 text-purple-400" />
-                <span>Navigation</span>
-              </div>
-            </div>
-
-            {/* 2-Column Responsive Card Grid */}
-            <div className="relative z-10 p-3.5 sm:p-4 grid grid-cols-2 gap-2 sm:gap-2.5 max-h-[calc(100vh-10rem)] overflow-y-auto">
-              {navItems.map((item, idx) => {
+            {/* Clean, Simple Professional Single-Column List */}
+            <div className="relative z-10 px-4 py-3 space-y-1.5 max-h-[calc(100vh-6rem)] overflow-y-auto">
+              {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <motion.a
+                  <a
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    initial={{ opacity: 0, y: 12, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{
-                      delay: idx * 0.03,
-                      duration: 0.22,
-                      ease: 'easeOut',
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileMenuOpen(false);
+                      setTimeout(() => {
+                        const targetElem = document.querySelector(item.href);
+                        if (targetElem) {
+                          targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        } else {
+                          window.location.hash = item.href;
+                        }
+                      }, 400);
                     }}
-                    whileTap={{ scale: 0.96 }}
-                    className={`group relative flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 overflow-hidden cursor-pointer ${
+                    className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       isClinical
-                        ? 'bg-purple-50/40 hover:bg-purple-50 active:bg-purple-100/80 border-purple-100 hover:border-purple-300 shadow-sm'
-                        : 'bg-slate-900/80 hover:bg-slate-800/95 active:bg-purple-950/50 border-purple-500/20 hover:border-purple-400/50 shadow-sm shadow-black/30'
+                        ? 'text-slate-700 hover:text-purple-700 hover:bg-purple-50/80 active:bg-purple-100'
+                        : 'text-slate-200 hover:text-purple-200 hover:bg-slate-900 active:bg-slate-800'
                     }`}
                   >
-                    {/* Micro-Gradient Icon Container */}
-                    <div
-                      className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border bg-gradient-to-br transition-all duration-200 group-hover:scale-108 group-hover:shadow-md ${
-                        isClinical ? item.lightGradient : item.darkGradient
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
+                    <div className="flex items-center gap-3">
+                      <Icon className={`w-4 h-4 ${isClinical ? 'text-purple-600' : 'text-purple-400'}`} />
+                      <span>{item.label}</span>
                     </div>
-
-                    {/* Nav Title & Descriptive Subtitle */}
-                    <div className="min-w-0 flex-1">
-                      <div
-                        className={`text-xs font-bold truncate transition-colors leading-tight ${
-                          isClinical
-                            ? 'text-slate-900 group-hover:text-purple-700'
-                            : 'text-slate-100 group-hover:text-purple-200'
-                        }`}
-                      >
-                        {item.label}
-                      </div>
-                      <div
-                        className={`text-[10px] font-medium truncate transition-colors leading-tight mt-0.5 ${
-                          isClinical
-                            ? 'text-purple-700/75 group-hover:text-purple-900'
-                            : 'text-purple-300/75 group-hover:text-purple-200'
-                        }`}
-                      >
-                        {item.subtitle}
-                      </div>
-                    </div>
-
-                    {/* Interactive Arrow Indicator */}
-                    <ChevronRight
-                      className={`w-3.5 h-3.5 shrink-0 transition-all duration-200 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 ${
-                        isClinical ? 'text-purple-700' : 'text-purple-300'
-                      }`}
-                    />
-                  </motion.a>
+                    <ChevronRight className={`w-4 h-4 opacity-50 ${isClinical ? 'text-purple-600' : 'text-purple-400'}`} />
+                  </a>
                 );
               })}
-            </div>
-
-            {/* Bottom Quick-Action Panel */}
-            <div
-              className={`relative z-10 px-4 pt-1 pb-4 flex items-center gap-2 border-t ${
-                isClinical ? 'border-purple-100 bg-purple-50/20' : 'border-purple-500/15 bg-slate-950/60'
-              }`}
-            >
-              {onOpenResume && (
-                <motion.button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenResume();
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                    isClinical
-                      ? 'bg-purple-600 hover:bg-purple-700 text-white border-purple-500 shadow-sm shadow-purple-600/30'
-                      : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white border-purple-400/40 shadow-md shadow-purple-600/40 hover:shadow-purple-500/60'
-                  }`}
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>{t.nav.viewCv || 'View Full CV'}</span>
-                </motion.button>
-              )}
-
-              <a
-                href="#contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                  isClinical
-                    ? 'bg-white hover:bg-purple-50 text-purple-700 border-purple-200'
-                    : 'bg-slate-900/90 hover:bg-slate-800 text-purple-300 border-purple-500/30 hover:border-purple-400'
-                }`}
-              >
-                <Send className="w-3.5 h-3.5 text-purple-400" />
-                <span>{t.nav.contact}</span>
-              </a>
             </div>
           </motion.div>
         )}

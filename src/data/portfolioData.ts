@@ -96,7 +96,7 @@ export const PORTFOLIO_DATA = {
     name: 'Lubna Akter',
     headline: 'Clinical Pharmacy | Pharmaceutical Research & Pharmacology | Medical Writing & Drug Information | Healthcare',
     subtitle: 'Pharmacy Student',
-    photoUrl: '/Lubna-Akter-Pharmacist-Profile-Photo.png',
+    photoUrl: '/lubna_laboratory_photo_1791695973616.jpg',
     location: 'Gulshan, Vatara, Dhaka, Bangladesh',
     mapQuery: 'Vatara, Gulshan, Dhaka, Bangladesh',
     phone: '+88 0153 77 20 007',
@@ -165,10 +165,10 @@ export const PORTFOLIO_DATA = {
       discipline: 'Bachelor of Pharmacy (B. Pharm)',
       institution: 'University of Information Technology & Sciences (UITS)',
       institutionUrl: 'https://uits.edu.bd',
-      timeline: '4th Year',
+      timeline: '2027',
       location: 'Dhaka, Bangladesh',
       result: '3.37 / 4.00',
-      badge: '4th Year',
+      badge: '2027',
       group: 'Faculty of Pharmacy',
     },
     {
@@ -235,7 +235,7 @@ export const PORTFOLIO_DATA = {
       id: 'hepatitis',
       title: 'Efficacy of Entecavir vs. Lamivudine in Chronic Hepatitis B (Poster Presentation)',
       role: 'Co-Author',
-      status: 'Ranked Top 3 at a Pharma Presentation Competition',
+      status: 'Ranked Top 3',
       institution: 'Pharma Presentation Competition',
       description:
         'Compared antiviral efficacy of Entecavir and Lamivudine in chronic Hepatitis B, with a focus on public health impact in Bangladesh.',
@@ -252,15 +252,6 @@ export const PORTFOLIO_DATA = {
 
   certifications: [
     {
-      title: 'Computer Aided Drug and Vaccine Design',
-      issuer: 'BioPC',
-      organizationUrl: 'https://biopc.org/',
-      year: '2024',
-      location: 'Online',
-      grade: 'Completed',
-      group: 'Professional Training',
-    },
-    {
       title: 'Medicine Concept Plus',
       issuer: 'Clear Concept',
       organizationUrl: 'https://clearconcept.com.bd/',
@@ -268,6 +259,15 @@ export const PORTFOLIO_DATA = {
       location: 'Online',
       grade: 'Completed',
       group: 'Short Course',
+    },
+    {
+      title: 'Computer Aided Drug and Vaccine Design',
+      issuer: 'BioPC',
+      organizationUrl: 'https://biopc.org/',
+      year: '2024',
+      location: 'Online',
+      grade: 'Completed',
+      group: 'Professional Training',
     },
   ],
 
@@ -398,10 +398,10 @@ export const PORTFOLIO_DATA = {
       title: 'Aesthetic Journaling',
       category: 'Keeping My Memories',
       icon: 'BookOpen',
-      shortDesc: 'Vlogging and capturing days and trips on camera to look back on every moment.',
+      shortDesc: 'Capturing little moments, beautiful places, and everyday adventures through my lens, creating a visual diary of memories I can revisit and relive.',
       detailedDesc:
-        'I love vlogging and capturing my days and trips on camera, so I can look back on every moment and relive the memories.',
-      keywords: ['Vlogging', 'Memory keeping', 'Visual aesthetics'],
+        'Capturing little moments, beautiful places, and everyday adventures through my lens, creating a visual diary of memories I can revisit and relive.',
+      keywords: ['Visual diary', 'Memory keeping', 'Visual aesthetics'],
     },
   ] as PersonalInterestItem[],
 
